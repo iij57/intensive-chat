@@ -57,9 +57,9 @@ public class ChatService {
 		
 		for(ChatRoomEntity chatroom : chatrooms) {
 			
-			List<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatroom.getChatRoomId());
+			Iterable<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatroom.getChatRoomId());
 			
-			List<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatroom.getChatRoomId());
+			Iterable<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatroom.getChatRoomId());
 			
 			ChatRoomResponseDTO returnDto = new ChatRoomResponseDTO(chatroom.getChatRoomId(), chatroom.getChatRoomName(), chatroom.getStatus().toString(), locations, members);
 			
@@ -76,9 +76,9 @@ public class ChatService {
 		
 		ChatRoomEntity chatrooms = chatRoomRepository.findByChatRoomId(chatRoomId);
 			
-		List<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatrooms.getChatRoomId());
+		Iterable<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatrooms.getChatRoomId());
 			
-		List<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatrooms.getChatRoomId());
+		Iterable<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatrooms.getChatRoomId());
 			
 		
 		return new ChatRoomResponseDTO(chatrooms.getChatRoomId(), chatrooms.getChatRoomName(), chatrooms.getStatus().toString(), locations, members);
@@ -99,6 +99,20 @@ public class ChatService {
 		ChatMemberEntity chatMemberEntity = chatMemberRepository.findByChatRoomIdAndUserId(chatRoomRequestDTO.getChatRoomId(), chatRoomRequestDTO.getUserId());
 		
 		chatMemberRepository.delete(chatMemberEntity);
+	}
+	
+	public void deleteChatRoom(String chatRoomId) {
+		
+		Iterable<ChatMemberEntity> chatmember = chatMemberRepository.findByChatRoomId(Long.parseLong(chatRoomId));
+		
+		chatMemberRepository.deleteAll(chatmember);
+		
+		Iterable<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(Long.parseLong(chatRoomId));
+		
+		chatLocationRepository.deleteAll(locations);
+		
+		chatRoomRepository.deleteById(Long.parseLong(chatRoomId));
+		
 	}
 	
 

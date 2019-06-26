@@ -8,7 +8,7 @@ import com.sk.intensive.entity.ChatMemberEntity;
 
 public interface ChatMemberRepository extends CrudRepository<ChatMemberEntity, Long>{
 	
-	List<ChatMemberEntity> findByChatRoomId(long chatRoomId);
+	Iterable<ChatMemberEntity> findByChatRoomId(long chatRoomId);
 	
 	ChatMemberEntity findByChatRoomIdAndUserId(long chatRoomId, String userId);
 

@@ -1,7 +1,5 @@
 package com.sk.intensive.dto;
 
-import java.util.List;
-
 import com.sk.intensive.entity.ChatLocationEntity;
 import com.sk.intensive.entity.ChatMemberEntity;
 
@@ -19,7 +17,7 @@ public class ChatRoomResponseDTO {
 	private long chatRoomId;
 	private String chatRoomName;
 	private String chatRoomStatus;
-	private List<ChatLocationEntity> chatLocationEntity;
-	private List<ChatMemberEntity> chatMember;
+	private Iterable<ChatLocationEntity> chatLocationEntity;
+	private Iterable<ChatMemberEntity> chatMember;
 	
 }

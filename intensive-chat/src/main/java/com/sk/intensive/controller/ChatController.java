@@ -48,6 +48,12 @@ public class ChatController {
     	return chatService.getChatRoomsByChatRoomId(Long.parseLong(chatRoomId));
     }
     
+    @DeleteMapping("/v1/chatRooms/{chatRoomId}")
+    public void deleteChatRoom(@PathVariable("chatRoomId") String chatRoomId) {
+    	
+        chatService.deleteChatRoom(chatRoomId);
+    }
+    
     @PostMapping("/v1/chat")
     public void enterChatRoom(@RequestBody ChatRoomRequestDTO chatroom) {
     	

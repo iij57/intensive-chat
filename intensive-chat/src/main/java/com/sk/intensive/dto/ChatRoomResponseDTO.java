@@ -3,6 +3,7 @@ package com.sk.intensive.dto;
 import java.util.List;
 
 import com.sk.intensive.entity.ChatLocationEntity;
+import com.sk.intensive.entity.ChatMemberEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -19,5 +20,6 @@ public class ChatRoomResponseDTO {
 	private String chatRoomName;
 	private String chatRoomStatus;
 	private List<ChatLocationEntity> chatLocationEntity;
+	private List<ChatMemberEntity> chatMember;
 	
 }

@@ -7,8 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.sk.intensive.dto.ChatRoomDTO;
+import com.sk.intensive.dto.ChatRoomRequestDTO;
 import com.sk.intensive.dto.ChatRoomResponseDTO;
 import com.sk.intensive.entity.ChatLocationEntity;
+import com.sk.intensive.entity.ChatMemberEntity;
 import com.sk.intensive.entity.ChatRoomEntity;
 import com.sk.intensive.entity.ChatRoomStatus;
 import com.sk.intensive.repository.ChatLocationRepository;
@@ -57,8 +59,9 @@ public class ChatService {
 			
 			List<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatroom.getChatRoomId());
 			
+			List<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatroom.getChatRoomId());
 			
-			ChatRoomResponseDTO returnDto = new ChatRoomResponseDTO(chatroom.getChatRoomId(), chatroom.getChatRoomName(), chatroom.getStatus().toString(), locations);
+			ChatRoomResponseDTO returnDto = new ChatRoomResponseDTO(chatroom.getChatRoomId(), chatroom.getChatRoomName(), chatroom.getStatus().toString(), locations, members);
 			
 			returnValue.add(returnDto);
 			
@@ -68,5 +71,35 @@ public class ChatService {
 		
 		
 	}
+	
+	public ChatRoomResponseDTO getChatRoomsByChatRoomId(long chatRoomId){
+		
+		ChatRoomEntity chatrooms = chatRoomRepository.findByChatRoomId(chatRoomId);
+			
+		List<ChatLocationEntity> locations = chatLocationRepository.findByChatRoomId(chatrooms.getChatRoomId());
+			
+		List<ChatMemberEntity> members = chatMemberRepository.findByChatRoomId(chatrooms.getChatRoomId());
+			
+		
+		return new ChatRoomResponseDTO(chatrooms.getChatRoomId(), chatrooms.getChatRoomName(), chatrooms.getStatus().toString(), locations, members);
+		
+	}
+	
+	public void enterChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
+		
+		ChatMemberEntity chatMemberEntity = new ChatMemberEntity();
+		chatMemberEntity.setChatRoomId(chatRoomRequestDTO.getChatRoomId());
+		chatMemberEntity.setUserId(chatRoomRequestDTO.getUserId());
+		
+		chatMemberRepository.save(chatMemberEntity);
+	}
+	
+	public void exitChatRoom(ChatRoomRequestDTO chatRoomRequestDTO) {
+		
+		ChatMemberEntity chatMemberEntity = chatMemberRepository.findByChatRoomIdAndUserId(chatRoomRequestDTO.getChatRoomId(), chatRoomRequestDTO.getUserId());
+		
+		chatMemberRepository.delete(chatMemberEntity);
+	}
+	
 
 }

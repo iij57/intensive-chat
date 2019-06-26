@@ -1,7 +1,7 @@
 version: '3.7'
  
 services:
-  db:
+  db-chat:
     image: mariadb
     restart: always
     healthcheck:
@@ -11,31 +11,31 @@ services:
       timeout: 1s
       retries: 5
     ports:
-      - "3306:3306"
-    container_name : db
+      - "3307:3306"
+    container_name : db-chat
     environment:
       - MYSQL_ROOT_PASSWORD=nexcore
-      - MYSQL_DATABASE=svdonation
-      - MYSQL_USER=svdonation
-      - MYSQL_PASSWORD=svdonation
+      - MYSQL_DATABASE=intensive
+      - MYSQL_USER=intensive
+      - MYSQL_PASSWORD=intensive
       - TZ=Asia/Seoul
     volumes:
-      - /sw/svdonation/mariadb/data:/var/lib/mysql
-      - /sw/svdonation/mariadb/conf.d:/etc/mysql/conf.d
+      - /apps/intensive/chat/mariadb/data:/var/lib/mysql
+      - /apps/intensive/chat/mariadb/conf.d:/etc/mysql/conf.d
     command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     
-  svdonation:
-    image: solutiondevteam/svdonation
+  intensive-chat:
+    image: iij57/intensive-chat:1.0
     restart: always
-    container_name : svdonation
+    container_name : intensive-chat
     environment:
-      - MYSQL_URL=db
-      - MYSQL_PORT=3306
-      - MYSQL_DATABASE=svdonation
-      - MYSQL_USER=svdonation
-      - MYSQL_PASSWORD=svdonation
+      - MYSQL_URL=db-chat
+      - MYSQL_PORT=3307
+      - MYSQL_DATABASE=intensive
+      - MYSQL_USER=intensive
+      - MYSQL_PASSWORD=intensive
       - TZ=Asia/Seoul
     ports:
-      - "8080:8080"
+      - "8081:8080"
     depends_on:
-      - db
+      - db-chat

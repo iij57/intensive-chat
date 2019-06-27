@@ -7,15 +7,15 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @ToString
+@Getter
 public class ChatRoomDTO {
 	
 	private String chatRoomName;
-	private float wgs84_x;
-	private float wgs84_y;
+	private String wgs84_x;
+	private String wgs84_y;
 	
 }

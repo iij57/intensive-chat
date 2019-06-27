@@ -1,11 +1,25 @@
 package com.sk.intensive.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sk.intensive.dto.ChatRoomDTO;
 import com.sk.intensive.dto.ChatRoomRequestDTO;
 import com.sk.intensive.dto.ChatRoomResponseDTO;
@@ -29,6 +43,7 @@ public class ChatService {
 	@Autowired
 	private ChatLocationRepository chatLocationRepository;
 	
+	
 	public long createChatRoom(ChatRoomDTO chatRoomDTO) {
 		
 		ChatRoomEntity chatRoomEntity = new ChatRoomEntity();
@@ -41,7 +56,32 @@ public class ChatService {
 		ChatLocationEntity chatLocationEntity = new ChatLocationEntity();
 		chatLocationEntity.setChatRoomId(chatRoomEntity.getChatRoomId());
 		//서비스 완성 되면 호출해서 가져옴 값을 지정
-		chatLocationEntity.setAddrId(1);
+		// RestTemplate 에 MessageConverter 세팅
+	    List<HttpMessageConverter<?>> converters = new ArrayList<HttpMessageConverter<?>>();
+	    converters.add(new FormHttpMessageConverter());
+	    converters.add(new StringHttpMessageConverter());
+	 
+	    RestTemplate restTemplate = new RestTemplate();
+	    restTemplate.setMessageConverters(converters);
+	    
+	    String geox = chatRoomDTO.getWgs84_x();
+	    String geoy = chatRoomDTO.getWgs84_y();
+	    
+	    String result = restTemplate.getForObject("http://13.124.20.178:8082/v1/locations/{geo}/", String.class, geox+","+geoy);
+	    
+	    System.out.println(result);
+	    
+	    ObjectMapper mapper = new ObjectMapper();
+	    List<Map<String, Object>> data;
+		try {
+			data = mapper.readValue(result, new TypeReference<List<Map<String, Object>>>(){});
+			chatLocationEntity.setAddrId(Long.parseLong(data.get(0).get("addrId").toString()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+	    
 		
 		chatLocationRepository.save(chatLocationEntity);
 		
@@ -113,6 +153,20 @@ public class ChatService {
 		
 		chatRoomRepository.deleteById(Long.parseLong(chatRoomId));
 		
+	}
+	
+	
+	private String getJSONData(String apiURL) throws Exception {
+		String jsonString = new String();
+		String buf;
+		URL url = new URL(apiURL);
+		URLConnection conn = url.openConnection();
+		BufferedReader br = new BufferedReader(new InputStreamReader(
+				conn.getInputStream(), "UTF-8"));
+		while ((buf = br.readLine()) != null) {
+			jsonString += buf;
+		}
+		return jsonString;
 	}
 	
 
